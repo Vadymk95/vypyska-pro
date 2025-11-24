@@ -2,14 +2,21 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { FEEDBACK_SOURCES } from '@/lib/constants';
+
 import { FeedbackForm } from './';
 
-// Mock the feedback service
-vi.mock('@/lib/services/feedback', () => ({
-    sendFeedback: vi.fn()
+vi.mock('@/store/feedbackStore', () => ({
+    useFeedbackStore: {
+        use: {
+            sendFeedback: vi.fn(() => Promise.resolve()),
+            isSubmitting: vi.fn(() => false),
+            error: vi.fn(() => null),
+            reset: vi.fn(() => {})
+        }
+    }
 }));
 
-// Mock Lucide icons
 vi.mock('lucide-react', () => ({
     Loader2: () => <div data-testid="loader" />,
     Send: () => <div data-testid="send-icon" />,
@@ -20,7 +27,7 @@ vi.mock('lucide-react', () => ({
 
 describe('FeedbackForm', () => {
     it('renders form fields', () => {
-        render(<FeedbackForm source="footer" />);
+        render(<FeedbackForm source={FEEDBACK_SOURCES.FOOTER} />);
 
         expect(screen.getByPlaceholderText(/Ваш email/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/Що можна покращити/i)).toBeInTheDocument();
@@ -28,22 +35,19 @@ describe('FeedbackForm', () => {
     });
 
     it('shows validation errors for invalid email', async () => {
-        render(<FeedbackForm source="footer" />);
+        render(<FeedbackForm source={FEEDBACK_SOURCES.FOOTER} />);
 
         const emailInput = screen.getByPlaceholderText(/Ваш email/i);
         const messageInput = screen.getByPlaceholderText(/Що можна покращити/i);
 
-        // Fill message first to avoid message validation error
         fireEvent.change(messageInput, {
             target: { value: 'Valid message with enough characters' }
         });
         fireEvent.blur(messageInput);
 
-        // Set invalid email and trigger validation
         fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
         fireEvent.blur(emailInput);
 
-        // Wait for validation error to appear
         await waitFor(
             () => {
                 expect(screen.getByText(/Введіть коректний email/i)).toBeInTheDocument();
@@ -53,7 +57,7 @@ describe('FeedbackForm', () => {
     });
 
     it('shows validation errors for short message', async () => {
-        render(<FeedbackForm source="footer" />);
+        render(<FeedbackForm source={FEEDBACK_SOURCES.FOOTER} />);
 
         const messageInput = screen.getByPlaceholderText(/Що можна покращити/i);
         const submitBtn = screen.getByRole('button', { name: /Надіслати відгук/i });
@@ -69,14 +73,9 @@ describe('FeedbackForm', () => {
     });
 
     it('handles rating selection', async () => {
-        render(<FeedbackForm source="footer" />);
+        render(<FeedbackForm source={FEEDBACK_SOURCES.FOOTER} />);
 
         const stars = screen.getAllByTestId('star');
-        // Click 5th star
         fireEvent.click(stars[4].parentElement!);
-
-        // Visual check relies on class implementation, but in logic state changes.
-        // Since we don't expose state easily, we trust the interaction.
-        // We can verify valid submission includes rating.
     });
 });

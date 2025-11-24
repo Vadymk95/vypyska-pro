@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { trackReportGenerated } from '@/lib/analytics';
 import type { ConverterStatus, ExportFormat } from '@/lib/constants';
 import {
     BANK_NAMES,
@@ -11,7 +12,6 @@ import {
 import { download1CFile } from '@/lib/converters/to1c';
 import { parseMonobankCsv, parsePrivatBankCsv } from '@/lib/parsers';
 import type { BankType, ParseResult } from '@/lib/parsers/types';
-import { useAppStore } from '@/store/appStore';
 
 export const useConverter = () => {
     const [status, setStatus] = useState<ConverterStatus>(CONVERTER_STATUS.IDLE);
@@ -20,8 +20,6 @@ export const useConverter = () => {
     const [parsedData, setParsedData] = useState<ParseResult | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const [selectedBank, setSelectedBank] = useState<BankType>(BANK_NAMES.MONOBANK);
-
-    const addToHistory = useAppStore.use.addToHistory();
 
     const handleFileSelect = async (file: File, bank?: BankType) => {
         setStatus(CONVERTER_STATUS.PROCESSING);
@@ -59,14 +57,6 @@ export const useConverter = () => {
                 bank: result.metadata.bankName
             });
             setStatus(CONVERTER_STATUS.SUCCESS);
-
-            // Save to global history
-            addToHistory({
-                fileName: file.name,
-                bankName: result.metadata.bankName,
-                transactionCount: result.transactions.length,
-                data: result
-            });
         } catch (err) {
             console.error(err);
             if (err instanceof Error) {
@@ -85,6 +75,13 @@ export const useConverter = () => {
         try {
             await new Promise((resolve) => setTimeout(resolve, DELAYS.DOWNLOAD));
             download1CFile(parsedData, format);
+
+            // Track report generation
+            trackReportGenerated({
+                format: format as 'txt' | 'xml',
+                bank: parsedData.metadata.bankName,
+                transaction_count: parsedData.transactions.length
+            });
         } catch (err) {
             console.error(err);
         } finally {
