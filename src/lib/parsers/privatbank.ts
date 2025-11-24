@@ -68,16 +68,24 @@ export const parsePrivatBankCsv = async (
                         const currencyKey = Object.keys(row).find((k) =>
                             k.toLowerCase().includes('валюта')
                         );
-                        const descKey = Object.keys(row).find(
-                            (k) =>
-                                k.toLowerCase().includes('призначення') ||
-                                k.toLowerCase().includes('опис')
-                        );
-                        const counterpartyKey = Object.keys(row).find(
-                            (k) =>
-                                k.toLowerCase().includes('контрагент') ||
-                                k.toLowerCase().includes('плательщик')
-                        );
+                        const descKey = Object.keys(row).find((k) => {
+                            const lower = k.toLowerCase();
+                            return (
+                                lower.includes('призначення') ||
+                                lower.includes('опис') ||
+                                lower.includes('призначення платежу') ||
+                                lower.includes('призначення переказу')
+                            );
+                        });
+                        const counterpartyKey = Object.keys(row).find((k) => {
+                            const lower = k.toLowerCase();
+                            return (
+                                lower.includes('контрагент') ||
+                                lower.includes('плательщик') ||
+                                lower.includes('отримувач') ||
+                                lower.includes('одержувач')
+                            );
+                        });
                         const balanceKey = Object.keys(row).find((k) =>
                             k.toLowerCase().includes('залишок')
                         );

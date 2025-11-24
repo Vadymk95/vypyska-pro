@@ -12,22 +12,39 @@ export interface FileStructure {
 export const detectBankFromStructure = (headers: string[]): BankType | null => {
     const lowerHeaders = headers.map((h) => h.toLowerCase().trim());
 
-    const hasMonobankFields =
-        (lowerHeaders.some((h) => h.includes('date') || h.includes('дата')) ||
-            lowerHeaders.some((h) => h.includes('дата') && h.includes('час'))) &&
-        (lowerHeaders.some((h) => h.includes('time') || h.includes('час')) ||
-            lowerHeaders.some((h) => h.includes('дата') && h.includes('час'))) &&
-        (lowerHeaders.some((h) => h.includes('description') || h.includes('опис')) ||
-            lowerHeaders.some((h) => h.includes('деталі'))) &&
-        lowerHeaders.some((h) => h.includes('amount') || h.includes('сума')) &&
-        lowerHeaders.some((h) => h.includes('balance') || h.includes('залишок'));
+    const hasDateTimeCombined = lowerHeaders.some(
+        (h) => h.includes('дата') && h.includes('час') && (h.includes('i') || h.includes('і'))
+    );
+
+    const hasDate = lowerHeaders.some((h) => h.includes('date') || h.includes('дата'));
+    const hasTime = lowerHeaders.some((h) => h.includes('time') || h.includes('час'));
+    const hasDateTime = hasDateTimeCombined || (hasDate && hasTime);
+
+    const hasDescription =
+        lowerHeaders.some((h) => h.includes('description') || h.includes('опис')) ||
+        lowerHeaders.some((h) => h.includes('деталі'));
+    const hasAmount = lowerHeaders.some((h) => h.includes('amount') || h.includes('сума'));
+    const hasBalance = lowerHeaders.some((h) => h.includes('balance') || h.includes('залишок'));
+
+    const hasMonobankFields = hasDateTime && hasDescription && hasAmount && hasBalance;
+
+    const hasPrivatBankDate = lowerHeaders.some((h) => h.includes('дата'));
+    const hasPrivatBankTime = lowerHeaders.some((h) => h.includes('час'));
+    const hasPrivatBankAmount = lowerHeaders.some(
+        (h) => h.includes('сума') && !h.includes('залишок')
+    );
+    const hasPrivatBankCurrency = lowerHeaders.some((h) => h.includes('валюта'));
+    const hasPrivatBankDescription = lowerHeaders.some(
+        (h) => h.includes('призначення') || h.includes('опис')
+    );
 
     const hasPrivatBankFields =
-        lowerHeaders.some((h) => h.includes('дата')) &&
-        lowerHeaders.some((h) => h.includes('час')) &&
-        lowerHeaders.some((h) => h.includes('тип операції') || h.includes('тип операц')) &&
-        lowerHeaders.some((h) => h.includes('сума') && !h.includes('залишок')) &&
-        lowerHeaders.some((h) => h.includes('валюта'));
+        hasPrivatBankDate &&
+        hasPrivatBankTime &&
+        hasPrivatBankAmount &&
+        hasPrivatBankCurrency &&
+        hasPrivatBankDescription &&
+        !hasDateTimeCombined;
 
     if (hasMonobankFields && !hasPrivatBankFields) {
         return BANKS.MONOBANK;
@@ -35,6 +52,10 @@ export const detectBankFromStructure = (headers: string[]): BankType | null => {
 
     if (hasPrivatBankFields && !hasMonobankFields) {
         return BANKS.PRIVATBANK;
+    }
+
+    if (hasDateTimeCombined && hasAmount && hasDescription) {
+        return BANKS.MONOBANK;
     }
 
     return null;

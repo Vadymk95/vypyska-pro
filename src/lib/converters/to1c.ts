@@ -67,6 +67,7 @@ export const generate1CXml = (data: ParseResult): string => {
                 <ПризначенняПлатежу>${escapeXml(transaction.description)}</ПризначенняПлатежу>
                 ${transaction.sender ? `<Платник>${escapeXml(transaction.sender)}</Платник>` : ''}
                 ${transaction.recipient ? `<Отримувач>${escapeXml(transaction.recipient)}</Отримувач>` : ''}
+                ${transaction.edrpou ? `<ЄДРПОУ>${escapeXml(transaction.edrpou)}</ЄДРПОУ>` : ''}
             </Документ>
 `;
     });
