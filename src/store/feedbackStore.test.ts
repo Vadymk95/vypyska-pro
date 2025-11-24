@@ -1,7 +1,7 @@
 import { addDoc } from 'firebase/firestore';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { FEEDBACK_SOURCES } from '@/lib/constants';
+import { FEEDBACK_SOURCES } from '@/constants';
 
 import { useFeedbackStore } from './feedbackStore';
 

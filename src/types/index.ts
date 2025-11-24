@@ -1,4 +1,4 @@
-import type { BankName, BankType } from '@/lib/constants';
+import type { BankName } from '@/constants';
 
 export interface Transaction {
     date: string;
@@ -23,5 +23,3 @@ export interface ParseResult {
         };
     };
 }
-
-export type { BankType };

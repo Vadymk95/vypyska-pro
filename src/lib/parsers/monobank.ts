@@ -1,11 +1,13 @@
 import { parse } from 'papaparse';
 
-import { BANKS, DEFAULT_CURRENCY } from '@/lib/constants';
+import type { BankType } from '@/constants';
+import { BANKS, DEFAULT_CURRENCY } from '@/constants';
+import type { ParseResult, Transaction } from '@/types';
+import { readFileWithEncoding } from '@/utils/file';
 
-import type { ParseResult, Transaction } from './types';
-import { readFileWithEncoding } from './utils';
+import { validateFileStructure } from './validators';
 
-export const parseMonobankCsv = async (file: File): Promise<ParseResult> => {
+export const parseMonobankCsv = async (file: File, selectedBank?: string): Promise<ParseResult> => {
     const csvContent = await readFileWithEncoding(file);
 
     return new Promise((resolve, reject) => {
@@ -19,11 +21,19 @@ export const parseMonobankCsv = async (file: File): Promise<ParseResult> => {
             transformHeader: (header) => header.trim().replace(/^["']|["']$/g, ''),
             complete: (results) => {
                 try {
+                    const headers = results.meta.fields || [];
                     const transactions: Transaction[] = [];
                     const data = results.data;
 
                     if (!data || data.length === 0) {
                         throw new Error('Файл порожній або має неправильний формат');
+                    }
+
+                    if (selectedBank) {
+                        const validation = validateFileStructure(headers, selectedBank as BankType);
+                        if (!validation.isValid) {
+                            throw new Error(validation.error || 'Неправильна структура файлу');
+                        }
                     }
 
                     data.forEach((row) => {

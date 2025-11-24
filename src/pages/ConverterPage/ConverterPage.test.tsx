@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { BANKS, CONVERTER_STATUS } from '@/lib/constants';
+import { BANKS, CONVERTER_STATUS } from '@/constants';
 
 import { ConverterPage } from '.';
 import * as useConverterHook from './useConverter';

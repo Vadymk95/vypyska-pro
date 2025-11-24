@@ -1,17 +1,11 @@
 import { useState } from 'react';
 
+import type { BankType, ConverterStatus, ExportFormat } from '@/constants';
+import { BANK_NAMES, CONVERTER_STATUS, DELAYS, EXPORT_FORMATS, FILE_FORMATS } from '@/constants';
 import { trackReportGenerated } from '@/lib/analytics';
-import type { ConverterStatus, ExportFormat } from '@/lib/constants';
-import {
-    BANK_NAMES,
-    CONVERTER_STATUS,
-    DELAYS,
-    EXPORT_FORMATS,
-    FILE_FORMATS
-} from '@/lib/constants';
 import { download1CFile } from '@/lib/converters/to1c';
 import { parseMonobankCsv, parsePrivatBankCsv } from '@/lib/parsers';
-import type { BankType, ParseResult } from '@/lib/parsers/types';
+import type { ParseResult } from '@/types';
 
 export const useConverter = () => {
     const [status, setStatus] = useState<ConverterStatus>(CONVERTER_STATUS.IDLE);
@@ -41,9 +35,9 @@ export const useConverter = () => {
 
             if (fileExtension === FILE_FORMATS.CSV) {
                 if (bankToUse === BANK_NAMES.PRIVATBANK) {
-                    result = await parsePrivatBankCsv(file);
+                    result = await parsePrivatBankCsv(file, bankToUse);
                 } else {
-                    result = await parseMonobankCsv(file);
+                    result = await parseMonobankCsv(file, bankToUse);
                 }
             } else {
                 throw new Error(

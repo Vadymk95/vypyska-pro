@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import type { FeedbackSource } from '@/lib/constants';
+import type { FeedbackSource } from '@/constants';
 import { useFeedbackStore } from '@/store/feedbackStore';
 
 const feedbackSchema = z.object({

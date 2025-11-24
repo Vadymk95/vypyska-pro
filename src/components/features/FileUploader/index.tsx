@@ -3,8 +3,8 @@ import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/lib/constants';
-import type { BankType } from '@/lib/parsers/types';
+import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/constants';
+import type { BankType } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { BankSelector } from './BankSelector';

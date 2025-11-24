@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { FEEDBACK_SOURCES } from '@/lib/constants';
+import { FEEDBACK_SOURCES } from '@/constants';
 
 import { FeedbackForm } from './';
 

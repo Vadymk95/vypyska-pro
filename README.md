@@ -101,7 +101,7 @@ src/
     VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
     ```
 
-    > Note: See `FIREBASE_SETUP.md` for detailed Firebase setup instructions. The app works without Firebase config, but feedback and analytics won't function.
+    > Note: The app works without Firebase config, but feedback and analytics won't function. See Firebase documentation for setup instructions.
 
 3.  **Run Development Server:**
 

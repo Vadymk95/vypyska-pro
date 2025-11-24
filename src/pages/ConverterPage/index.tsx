@@ -12,7 +12,7 @@ import {
     CardHeader,
     CardTitle
 } from '@/components/ui/card';
-import { CONVERTER_STATUS, EXPORT_FORMATS, FEEDBACK_SOURCES } from '@/lib/constants';
+import { CONVERTER_STATUS, EXPORT_FORMATS, FEEDBACK_SOURCES } from '@/constants';
 
 import { useConverter } from './useConverter';
 

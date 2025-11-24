@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BANKS, DEFAULT_CURRENCY } from '@/lib/constants';
-import type { ParseResult } from '@/lib/parsers/types';
+import { BANKS, DEFAULT_CURRENCY } from '@/constants';
+import type { ParseResult } from '@/types';
 
 import { generate1CTxt, generate1CXml } from './to1c';
 

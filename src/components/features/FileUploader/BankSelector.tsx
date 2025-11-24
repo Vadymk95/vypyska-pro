@@ -2,8 +2,8 @@ import type { FC } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { BANK_DISPLAY_NAMES, BANK_NAMES } from '@/lib/constants';
-import type { BankType } from '@/lib/parsers/types';
+import { BANK_DISPLAY_NAMES, BANK_NAMES } from '@/constants';
+import type { BankType } from '@/constants';
 
 interface BankSelectorProps {
     value: BankType;

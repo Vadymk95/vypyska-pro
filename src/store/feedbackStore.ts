@@ -2,7 +2,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { FeedbackSource } from '@/lib/constants';
+import type { FeedbackSource } from '@/constants';
 import { db } from '@/lib/firebase';
 
 import { createSelectors } from './utils/createSelectors';

@@ -24,7 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { FEEDBACK_SOURCES } from '@/lib/constants';
+import { FEEDBACK_SOURCES } from '@/constants';
 
 export const DevPlayground: FC = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
