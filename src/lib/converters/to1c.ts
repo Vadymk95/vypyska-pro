@@ -1,16 +1,14 @@
 import { saveAs } from 'file-saver';
 
-import { EXPORT_FORMATS, FILE_EXTENSIONS, FILE_NAMES } from '@/lib/constants';
 import type { ExportFormat } from '@/lib/constants';
+import { EXPORT_FORMATS, FILE_EXTENSIONS, FILE_NAMES } from '@/lib/constants';
 import type { ParseResult } from '@/lib/parsers/types';
 
-// Helper to format date for 1C (DD.MM.YYYY)
 const format1CDate = (isoDate: string): string => {
     const d = new Date(isoDate);
     return `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear()}`;
 };
 
-// Helper to format date with time for 1C (DD.MM.YYYY HH:mm:ss)
 const format1CDateTime = (isoDate: string): string => {
     const d = new Date(isoDate);
     const date = format1CDate(isoDate);
@@ -20,7 +18,6 @@ const format1CDateTime = (isoDate: string): string => {
     return `${date} ${hours}:${minutes}:${seconds}`;
 };
 
-// Helper to escape XML special characters
 const escapeXml = (str: string): string => {
     return str
         .replace(/&/g, '&amp;')
@@ -31,7 +28,6 @@ const escapeXml = (str: string): string => {
 };
 
 export const generate1CXml = (data: ParseResult): string => {
-    // Calculate totals for statement
     const totalIncome = data.transactions
         .filter((t) => t.amount > 0)
         .reduce((sum, t) => sum + t.amount, 0);
@@ -41,7 +37,6 @@ export const generate1CXml = (data: ParseResult): string => {
     const startBalance = data.transactions[data.transactions.length - 1]?.balance || 0;
     const endBalance = data.transactions[0]?.balance || 0;
 
-    // XML structure for 1C ClientBankExchange (Ukrainian format)
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <КлієнтБанкОбмін>
     <ЗагальніВідомості>
@@ -83,9 +78,7 @@ export const generate1CXml = (data: ParseResult): string => {
     return xml;
 };
 
-// Generate TXT format for 1C ClientBankExchange (Ukrainian standard)
 export const generate1CTxt = (data: ParseResult): string => {
-    // Calculate totals for statement
     const totalIncome = data.transactions
         .filter((t) => t.amount > 0)
         .reduce((sum, t) => sum + t.amount, 0);
@@ -95,7 +88,6 @@ export const generate1CTxt = (data: ParseResult): string => {
     const startBalance = data.transactions[data.transactions.length - 1]?.balance || 0;
     const endBalance = data.transactions[0]?.balance || 0;
 
-    // TXT format for 1C ClientBankExchange (Ukrainian format)
     let txt = `1CClientBankExchange
 ВерсіяФормату=1.02
 Кодування=Windows

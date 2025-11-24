@@ -5,7 +5,6 @@ import type { ParseResult } from '@/lib/parsers/types';
 
 import { generate1CTxt, generate1CXml } from './to1c';
 
-// Mock file-saver
 vi.mock('file-saver', () => ({
     saveAs: vi.fn()
 }));

@@ -119,7 +119,6 @@ export const parseMonobankCsv = async (file: File): Promise<ParseResult> => {
                         throw new Error('Не вдалося знайти транзакції. Перевірте формат файлу.');
                     }
 
-                    // Calculate period: find earliest and latest dates
                     const dates = transactions.map((t) => t.date).sort();
                     const start = dates[0] || '';
                     const end = dates[dates.length - 1] || '';
