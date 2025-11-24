@@ -24,7 +24,6 @@ export const parsePrivatBankCsv = async (
             transformHeader: (header) => header.trim().replace(/^["']|["']$/g, ''),
             complete: (results) => {
                 try {
-                    const headers = results.meta.fields || [];
                     const transactions: Transaction[] = [];
                     const data = results.data;
 
@@ -32,7 +31,16 @@ export const parsePrivatBankCsv = async (
                         throw new Error('Файл порожній або має неправильний формат');
                     }
 
-                    if (selectedBank) {
+                    let headers: string[] = [];
+                    if (results.meta.fields && results.meta.fields.length > 0) {
+                        headers = results.meta.fields;
+                    } else if (data[0] && Object.keys(data[0]).length > 0) {
+                        headers = Object.keys(data[0]);
+                    } else {
+                        throw new Error('Не вдалося визначити заголовки файлу');
+                    }
+
+                    if (selectedBank && headers.length > 0) {
                         const validation = validateFileStructure(headers, selectedBank as BankType);
                         if (!validation.isValid) {
                             throw new Error(validation.error || 'Неправильна структура файлу');

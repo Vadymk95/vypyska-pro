@@ -13,9 +13,12 @@ export const detectBankFromStructure = (headers: string[]): BankType | null => {
     const lowerHeaders = headers.map((h) => h.toLowerCase().trim());
 
     const hasMonobankFields =
-        lowerHeaders.some((h) => h.includes('date') || h.includes('дата')) &&
-        lowerHeaders.some((h) => h.includes('time') || h.includes('час')) &&
-        lowerHeaders.some((h) => h.includes('description') || h.includes('опис')) &&
+        (lowerHeaders.some((h) => h.includes('date') || h.includes('дата')) ||
+            lowerHeaders.some((h) => h.includes('дата') && h.includes('час'))) &&
+        (lowerHeaders.some((h) => h.includes('time') || h.includes('час')) ||
+            lowerHeaders.some((h) => h.includes('дата') && h.includes('час'))) &&
+        (lowerHeaders.some((h) => h.includes('description') || h.includes('опис')) ||
+            lowerHeaders.some((h) => h.includes('деталі'))) &&
         lowerHeaders.some((h) => h.includes('amount') || h.includes('сума')) &&
         lowerHeaders.some((h) => h.includes('balance') || h.includes('залишок'));
 
