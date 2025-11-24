@@ -1,6 +1,6 @@
 ## Vypyska.pro · Bank Statement Converter
 
-A modern, privacy-first web application for converting bank statements from Monobank and PrivatBank into 1C/BAS compatible XML format. All processing happens locally in your browser—your financial data never leaves your device.
+A modern, privacy-first web application for converting bank statements from Monobank and PrivatBank into 1C/BAS compatible TXT and XML formats. All processing happens locally in your browser—your financial data never leaves your device.
 
 > **Note:** Targets **Node.js v24**. Includes strict version management via `.nvmrc` and `package.json` engines.
 
@@ -8,11 +8,12 @@ A modern, privacy-first web application for converting bank statements from Mono
 
 #### Core Functionality
 
-- **Bank Statement Conversion:** Convert CSV, XLS, and PDF files from Monobank and PrivatBank
-- **1C/BAS XML Export:** Generate XML files compatible with 1C accounting systems
+- **Bank Statement Conversion:** Convert CSV files from Monobank and PrivatBank
+- **1C/BAS Export:** Generate TXT and XML files compatible with 1C accounting systems
 - **100% Local Processing:** All file operations happen in your browser—no server uploads
 - **Privacy-First:** Zero data collection, GDPR compliant
-- **User Feedback System:** Integrated Firebase for collecting user feedback and ratings
+- **User Feedback System:** Integrated Firebase (Firestore) for collecting user feedback
+- **Analytics:** Firebase Analytics for tracking page views and report generation (privacy-first, no cookies)
 
 #### Tech Stack
 
@@ -21,9 +22,8 @@ A modern, privacy-first web application for converting bank statements from Mono
 - **TypeScript** with strict rules and `@/*` path aliases
 - **React Router v7** for robust routing
 - **Zustand** for global state (with devtools & auto-selectors)
-- **TanStack Query v5** for async state management
 - **React Hook Form + Zod** for type-safe forms
-- **Firebase** for feedback collection
+- **Firebase** (Firestore + Analytics) for feedback collection and usage analytics
 
 #### UI & Styling
 
@@ -45,8 +45,9 @@ A modern, privacy-first web application for converting bank statements from Mono
 - **Dev Playground:** Built-in UI showcase at `/dev/ui` (Development only).
 - **VS Code Integrated:** Pre-configured `.vscode` settings, extensions recommendations, and snippets.
 - **Linting:** ESLint (Flat Config) + Prettier + Import Sorting.
-- **Git Hooks:** Husky + Lint Staged + Commitlint to enforce quality.
+- **Git Hooks:** Husky + Lint Staged + Commitlint (conventional commits) to enforce quality.
 - **Comprehensive Testing:** Vitest with React Testing Library
+- **Architecture:** Component → Hook → Store → Firebase (clean separation of concerns)
 
 ### 🛠 Project Structure
 
@@ -60,15 +61,18 @@ src/
   hocs/              // Custom HOCs (e.g. WithSuspense)
   hooks/             // Custom hooks
   lib/
-    converters/      // 1C XML conversion logic
-    parsers/         // Bank statement parsers (Monobank, etc.)
-    services/        // Firebase services
+    analytics.ts     // Firebase Analytics tracking
+    constants/       // App constants (banks, formats, statuses, etc.)
+    converters/      // 1C TXT/XML conversion logic
+    firebase.ts      // Firebase initialization
+    parsers/         // Bank statement parsers (Monobank, PrivatBank)
+    utils.ts         // Utility functions
   pages/             // Route-level components (Lazy loaded)
     ConverterPage/   // Main conversion interface
     DevPlayground/   // UI Kit showcase (Dev only)
     NotFoundPage/    // 404 page
   router/            // React Router setup
-  store/             // Zustand store with utilities
+  store/             // Zustand stores (feedbackStore)
   test/              // Vitest setup and helpers
   main.tsx           // App entry point
 ```
@@ -89,14 +93,15 @@ src/
 
     ```env
     VITE_FIREBASE_API_KEY=your_api_key
-    VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-    VITE_FIREBASE_PROJECT_ID=your_project_id
-    VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+    VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+    VITE_FIREBASE_PROJECT_ID=your-project-id
+    VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
     VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
     VITE_FIREBASE_APP_ID=your_app_id
+    VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
     ```
 
-    > Note: The app works without Firebase config—feedback submission will be simulated in development mode.
+    > Note: The app works without Firebase config, but feedback and analytics won't function. See Firebase documentation for setup instructions.
 
 3.  **Run Development Server:**
 

@@ -1,17 +1,11 @@
 import { useState } from 'react';
 
-import type { ConverterStatus, ExportFormat } from '@/lib/constants';
-import {
-    BANK_NAMES,
-    CONVERTER_STATUS,
-    DELAYS,
-    EXPORT_FORMATS,
-    FILE_FORMATS
-} from '@/lib/constants';
+import type { BankType, ConverterStatus, ExportFormat } from '@/constants';
+import { BANK_NAMES, CONVERTER_STATUS, DELAYS, EXPORT_FORMATS, FILE_FORMATS } from '@/constants';
+import { trackReportGenerated } from '@/lib/analytics';
 import { download1CFile } from '@/lib/converters/to1c';
 import { parseMonobankCsv, parsePrivatBankCsv } from '@/lib/parsers';
-import type { BankType, ParseResult } from '@/lib/parsers/types';
-import { useAppStore } from '@/store/appStore';
+import type { ParseResult } from '@/types';
 
 export const useConverter = () => {
     const [status, setStatus] = useState<ConverterStatus>(CONVERTER_STATUS.IDLE);
@@ -20,8 +14,6 @@ export const useConverter = () => {
     const [parsedData, setParsedData] = useState<ParseResult | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const [selectedBank, setSelectedBank] = useState<BankType>(BANK_NAMES.MONOBANK);
-
-    const addToHistory = useAppStore.use.addToHistory();
 
     const handleFileSelect = async (file: File, bank?: BankType) => {
         setStatus(CONVERTER_STATUS.PROCESSING);
@@ -43,9 +35,9 @@ export const useConverter = () => {
 
             if (fileExtension === FILE_FORMATS.CSV) {
                 if (bankToUse === BANK_NAMES.PRIVATBANK) {
-                    result = await parsePrivatBankCsv(file);
+                    result = await parsePrivatBankCsv(file, bankToUse);
                 } else {
-                    result = await parseMonobankCsv(file);
+                    result = await parseMonobankCsv(file, bankToUse);
                 }
             } else {
                 throw new Error(
@@ -59,14 +51,6 @@ export const useConverter = () => {
                 bank: result.metadata.bankName
             });
             setStatus(CONVERTER_STATUS.SUCCESS);
-
-            // Save to global history
-            addToHistory({
-                fileName: file.name,
-                bankName: result.metadata.bankName,
-                transactionCount: result.transactions.length,
-                data: result
-            });
         } catch (err) {
             console.error(err);
             if (err instanceof Error) {
@@ -85,6 +69,13 @@ export const useConverter = () => {
         try {
             await new Promise((resolve) => setTimeout(resolve, DELAYS.DOWNLOAD));
             download1CFile(parsedData, format);
+
+            // Track report generation
+            trackReportGenerated({
+                format: format as 'txt' | 'xml',
+                bank: parsedData.metadata.bankName,
+                transaction_count: parsedData.transactions.length
+            });
         } catch (err) {
             console.error(err);
         } finally {

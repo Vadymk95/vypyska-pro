@@ -3,8 +3,8 @@ import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/lib/constants';
-import type { BankType } from '@/lib/parsers/types';
+import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/constants';
+import type { BankType } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { BankSelector } from './BankSelector';
@@ -93,7 +93,6 @@ export const FileUploader: FC<FileUploaderProps> = ({
                     </div>
                 </div>
 
-                {/* Decorative background pattern */}
                 <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
                     <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <pattern

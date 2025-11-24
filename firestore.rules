@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User feedbacks collection
+    match /feedbacks/{feedbackId} {
+      // Allow anyone (including anonymous users) to create feedback
+      // Required for feedback form to work without authentication
+      allow create: if true;
+
+      // Deny reading - only admins via console can view feedbacks
+      allow read: if false;
+
+      // Deny update and delete - feedbacks are immutable
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Deny access to all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

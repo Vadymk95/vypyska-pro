@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import type { FeedbackSource } from '@/lib/constants';
-import { sendFeedback } from '@/lib/services/feedback';
+import type { FeedbackSource } from '@/constants';
+import { useFeedbackStore } from '@/store/feedbackStore';
 
 const feedbackSchema = z.object({
     email: z.string().email('Введіть коректний email'),
@@ -21,9 +21,12 @@ interface UseFeedbackFormProps {
 
 export const useFeedbackForm = ({ source, onSuccess }: UseFeedbackFormProps) => {
     const [rating, setRating] = useState<number>(0);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+
+    const sendFeedback = useFeedbackStore.use.sendFeedback();
+    const isSubmitting = useFeedbackStore.use.isSubmitting();
+    const error = useFeedbackStore.use.error();
+    const resetStore = useFeedbackStore.use.reset();
 
     const {
         register,
@@ -45,34 +48,20 @@ export const useFeedbackForm = ({ source, onSuccess }: UseFeedbackFormProps) => 
     };
 
     const onSubmit = async (data: FeedbackFormValues) => {
-        setIsSubmitting(true);
-        setError(null);
         try {
-            if (!import.meta.env.VITE_FIREBASE_API_KEY) {
-                console.warn('Firebase config missing, simulating success:', data);
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-            } else {
-                await sendFeedback({ ...data, source });
-            }
+            await sendFeedback({ ...data, source });
             setIsSuccess(true);
             if (onSuccess) onSuccess();
         } catch (err) {
             console.error(err);
-            const errorMessage =
-                err instanceof Error
-                    ? err.message
-                    : 'Не вдалося відправити відгук. Спробуйте ще раз пізніше.';
-            setError(errorMessage);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
     const handleReset = () => {
         setIsSuccess(false);
         setRating(0);
-        setError(null);
         reset();
+        resetStore();
     };
 
     return {

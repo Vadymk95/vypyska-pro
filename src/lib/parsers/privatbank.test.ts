@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BANKS } from '@/lib/constants';
+import { BANKS } from '@/constants';
 
 import { parsePrivatBankCsv } from './privatbank';
 
@@ -12,10 +12,8 @@ vi.mock('papaparse', () => ({
     parse: vi.fn((content, options) => {
         const csvContent = content as string;
         const lines = csvContent.split('\n').filter((line) => line.trim());
-        // Detect delimiter (semicolon for PrivatBank, comma for others)
         const delimiter = csvContent.includes(';') ? ';' : ',';
         const rawHeaders = lines[0].split(delimiter);
-        // Apply transformHeader if provided
         const transformHeader =
             (options?.transformHeader as ((h: string) => string) | undefined) ||
             ((h: string) => h.trim());

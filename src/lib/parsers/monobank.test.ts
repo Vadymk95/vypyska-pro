@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BANKS } from '@/lib/constants';
+import { BANKS } from '@/constants';
 
 import { parseMonobankCsv } from './monobank';
 

@@ -3,20 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { download1CFile } from '@/lib/converters/to1c';
 import { parseMonobankCsv, parsePrivatBankCsv } from '@/lib/parsers';
 
-// Mock dependencies
 vi.mock('@/lib/parsers');
 vi.mock('@/lib/converters/to1c');
-vi.mock('@/store/appStore', () => ({
-    useAppStore: {
-        use: {
-            addToHistory: vi.fn(() => vi.fn())
-        }
-    }
-}));
-
-// Note: useConverter hook testing requires React Testing Library setup
-// For now, we test the core logic through integration tests in ConverterPage.test.tsx
-// This file serves as a placeholder for future hook-specific tests
 
 describe('useConverter integration', () => {
     beforeEach(() => {

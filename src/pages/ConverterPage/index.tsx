@@ -12,7 +12,7 @@ import {
     CardHeader,
     CardTitle
 } from '@/components/ui/card';
-import { CONVERTER_STATUS, EXPORT_FORMATS, FEEDBACK_SOURCES } from '@/lib/constants';
+import { CONVERTER_STATUS, EXPORT_FORMATS, FEEDBACK_SOURCES } from '@/constants';
 
 import { useConverter } from './useConverter';
 
@@ -31,7 +31,6 @@ export const ConverterPage: FC = () => {
 
     return (
         <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center space-y-12">
-            {/* Hero Section */}
             <div className="space-y-4 text-center">
                 <h1 className="text-foreground text-3xl font-extrabold tracking-tight md:text-5xl">
                     Конвертер виписок в <span className="text-primary">1С/BAS</span>
@@ -50,7 +49,6 @@ export const ConverterPage: FC = () => {
                 </p>
             </div>
 
-            {/* Main Converter Area */}
             {status === CONVERTER_STATUS.IDLE ||
             status === CONVERTER_STATUS.PROCESSING ||
             status === CONVERTER_STATUS.ERROR ? (
@@ -129,7 +127,6 @@ export const ConverterPage: FC = () => {
                             </div>
                         </div>
 
-                        {/* Feedback after success */}
                         <div className="mt-4 border-t pt-6">
                             <h4 className="text-muted-foreground mb-4 text-sm font-semibold">
                                 Як вам результат? Залиште короткий відгук:
@@ -148,7 +145,6 @@ export const ConverterPage: FC = () => {
                 </Card>
             )}
 
-            {/* Global Feedback Section */}
             <div className="w-full max-w-xl border-t py-12">
                 <div className="space-y-6 text-center">
                     <h2 className="text-2xl font-bold tracking-tight">Маєте пропозиції?</h2>

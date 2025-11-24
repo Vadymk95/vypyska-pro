@@ -1,11 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { BANK_NAMES } from '@/lib/constants';
+import { BANK_NAMES } from '@/constants';
 
 import { FileUploader } from './index';
 
-// Mock react-dropzone
 vi.mock('react-dropzone', () => ({
     useDropzone: vi.fn(({ onDrop, disabled }) => ({
         getRootProps: () => ({
@@ -21,7 +20,6 @@ vi.mock('react-dropzone', () => ({
     }))
 }));
 
-// Mock BankSelector
 vi.mock('./BankSelector', () => ({
     BankSelector: ({
         value,
@@ -96,15 +94,11 @@ describe('FileUploader', () => {
         const mockOnFileSelect = vi.fn();
         render(<FileUploader onFileSelect={mockOnFileSelect} isLoading />);
 
-        // When isLoading is true, the dropzone should be disabled
-        // This is tested indirectly by checking that file selection doesn't work
         const dropzone = screen.getByText(/Завантажити виписку/i).closest('div');
         if (dropzone) {
             fireEvent.click(dropzone);
         }
 
-        // File selection should not be called when disabled
-        // Note: The actual disabled state is handled by react-dropzone internally
         expect(screen.getByTestId('bank-selector')).toBeInTheDocument();
     });
 
@@ -160,7 +154,6 @@ describe('FileUploader', () => {
             fireEvent.click(dropzone);
         }
 
-        // When disabled, useDropzone should not trigger onDrop
         expect(mockOnFileSelect).not.toHaveBeenCalled();
     });
 });

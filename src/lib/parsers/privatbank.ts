@@ -1,11 +1,16 @@
 import { parse } from 'papaparse';
 
-import { BANKS, DEFAULT_CURRENCY } from '@/lib/constants';
+import type { BankType } from '@/constants';
+import { BANKS, DEFAULT_CURRENCY } from '@/constants';
+import type { ParseResult, Transaction } from '@/types';
+import { readFileWithEncoding } from '@/utils/file';
 
-import type { ParseResult, Transaction } from './types';
-import { readFileWithEncoding } from './utils';
+import { validateFileStructure } from './validators';
 
-export const parsePrivatBankCsv = async (file: File): Promise<ParseResult> => {
+export const parsePrivatBankCsv = async (
+    file: File,
+    selectedBank?: string
+): Promise<ParseResult> => {
     const csvContent = await readFileWithEncoding(file);
 
     return new Promise((resolve, reject) => {
@@ -24,6 +29,22 @@ export const parsePrivatBankCsv = async (file: File): Promise<ParseResult> => {
 
                     if (!data || data.length === 0) {
                         throw new Error('Файл порожній або має неправильний формат');
+                    }
+
+                    let headers: string[] = [];
+                    if (results.meta.fields && results.meta.fields.length > 0) {
+                        headers = results.meta.fields;
+                    } else if (data[0] && Object.keys(data[0]).length > 0) {
+                        headers = Object.keys(data[0]);
+                    } else {
+                        throw new Error('Не вдалося визначити заголовки файлу');
+                    }
+
+                    if (selectedBank && headers.length > 0) {
+                        const validation = validateFileStructure(headers, selectedBank as BankType);
+                        if (!validation.isValid) {
+                            throw new Error(validation.error || 'Неправильна структура файлу');
+                        }
                     }
 
                     data.forEach((row) => {
@@ -128,7 +149,6 @@ export const parsePrivatBankCsv = async (file: File): Promise<ParseResult> => {
                         throw new Error('Не вдалося знайти транзакції. Перевірте формат файлу.');
                     }
 
-                    // Calculate period: find earliest and latest dates
                     const dates = transactions.map((t) => t.date).sort();
                     const start = dates[0] || '';
                     const end = dates[dates.length - 1] || '';
