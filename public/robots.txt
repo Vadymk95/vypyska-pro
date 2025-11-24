@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vypyska.pro/sitemap.xml
+Sitemap: https://vypyska-pro.web.app/sitemap.xml
 
