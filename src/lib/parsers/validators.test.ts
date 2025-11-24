@@ -13,9 +13,20 @@ describe('validators', () => {
         });
 
         it('should detect PrivatBank structure', () => {
-            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта'];
+            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта', 'Призначення'];
             const result = detectBankFromStructure(headers);
             expect(result).toBe(BANKS.PRIVATBANK);
+        });
+
+        it('should detect Monobank with combined date-time field', () => {
+            const headers = [
+                'Дата i час операції',
+                'Деталі операції',
+                'Сума в валюті картки (UAH)',
+                'Залишок після операції'
+            ];
+            const result = detectBankFromStructure(headers);
+            expect(result).toBe(BANKS.MONOBANK);
         });
 
         it('should return null for unknown structure', () => {
@@ -31,7 +42,7 @@ describe('validators', () => {
         });
 
         it('should detect PrivatBank with mixed case', () => {
-            const headers = ['ДАТА', 'час', 'Тип операції', 'СУМА', 'валюта'];
+            const headers = ['ДАТА', 'час', 'Тип операції', 'СУМА', 'валюта', 'Призначення'];
             const result = detectBankFromStructure(headers);
             expect(result).toBe(BANKS.PRIVATBANK);
         });
@@ -46,7 +57,14 @@ describe('validators', () => {
         });
 
         it('should validate correct PrivatBank file', () => {
-            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта'];
+            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта', 'Призначення'];
+            const result = validateFileStructure(headers, BANKS.PRIVATBANK);
+            expect(result.isValid).toBe(true);
+            expect(result.detectedBank).toBe(BANKS.PRIVATBANK);
+        });
+
+        it('should validate PrivatBank file without Тип операції', () => {
+            const headers = ['Дата', 'Час', 'Сума', 'Валюта', 'Призначення'];
             const result = validateFileStructure(headers, BANKS.PRIVATBANK);
             expect(result.isValid).toBe(true);
             expect(result.detectedBank).toBe(BANKS.PRIVATBANK);
@@ -70,7 +88,7 @@ describe('validators', () => {
         });
 
         it('should reject PrivatBank file when Monobank is selected', () => {
-            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта'];
+            const headers = ['Дата', 'Час', 'Тип операції', 'Сума', 'Валюта', 'Призначення'];
             const result = validateFileStructure(headers, BANKS.MONOBANK);
             expect(result.isValid).toBe(false);
             expect(result.detectedBank).toBe(BANKS.PRIVATBANK);

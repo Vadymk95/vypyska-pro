@@ -95,6 +95,22 @@ describe('generate1CXml', () => {
         expect(xml).toContain('<Отримувач>ТОВ &quot;Роботодавець&quot;</Отримувач>');
     });
 
+    it('should include EDRPOU in XML when available', () => {
+        const resultWithEdrpou: ParseResult = {
+            ...mockParseResult,
+            transactions: [
+                {
+                    ...mockParseResult.transactions[0],
+                    edrpou: '12345678'
+                }
+            ]
+        };
+
+        const xml = generate1CXml(resultWithEdrpou);
+
+        expect(xml).toContain('<ЄДРПОУ>12345678</ЄДРПОУ>');
+    });
+
     it('should escape XML special characters', () => {
         const resultWithSpecialChars: ParseResult = {
             ...mockParseResult,

@@ -58,10 +58,15 @@ export const parseMonobankCsv = async (file: File, selectedBank?: string): Promi
                                 (k.toLowerCase().includes('час') &&
                                     !k.toLowerCase().includes('дата'))
                         );
-                        const dateTimeKey = Object.keys(row).find(
-                            (k) =>
-                                k.toLowerCase().includes('дата') && k.toLowerCase().includes('час')
-                        );
+                        const dateTimeKey = Object.keys(row).find((k) => {
+                            const lower = k.toLowerCase();
+                            return (
+                                (lower.includes('дата') && lower.includes('час')) ||
+                                (lower.includes('дата') &&
+                                    (lower.includes('i') || lower.includes('і')) &&
+                                    lower.includes('час'))
+                            );
+                        });
                         const statementKey = Object.keys(row).find(
                             (k) =>
                                 k.toLowerCase().includes('statement') &&
