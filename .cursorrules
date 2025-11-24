@@ -1,0 +1,224 @@
+# Cursor Rules for vypyska-pro project
+
+## Code Formatting
+
+### Always Follow Project Formatting
+- **ALWAYS follow the existing code formatting** in the project
+- Use Prettier configuration from the project (trailingComma: 'none', single quotes, etc.)
+- Follow ESLint rules configured in `eslint.config.js`
+- Use 4 spaces for indentation
+- **ALWAYS add an empty line at the end of every file** - this is critical and must not be forgotten
+- Match the formatting style of existing files in the same directory
+
+## Code Changes and Refactoring
+
+### Scope of Changes
+- **DO NOT perform refactoring** unless explicitly requested
+- **Only make targeted changes** within the scope of the current task
+- Do not improve or refactor unrelated code
+- Do not change code style or structure of files not related to the task
+- If refactoring is needed, ask for explicit permission first
+
+### When Refactoring is Requested
+- Only refactor when explicitly asked to do so
+- Clearly explain what will be refactored before proceeding
+- Ensure refactoring doesn't break existing functionality
+- Update tests if refactoring affects tested code
+
+## React and TypeScript
+
+### React 19
+- **DO NOT import React from 'react'** - React 19 does not require React import for JSX
+- Use only types from React: `import type { FC, PropsWithChildren } from 'react'`
+- Always use functional components
+
+### Functions and Components
+- **Always use arrow functions**, NOT function declarations
+- Type components with `FC` or `FC<PropsType>`
+- Example: `export const ComponentName: FC<ComponentProps> = () => { ... }`
+
+### Pages
+- For new pages, create the following structure:
+  - `PageName.tsx` - main file with component and **default export**
+  - `index.ts` - file with re-export via `React.lazy`
+- If page already uses `index.tsx` pattern (like ConverterPage), follow existing structure
+
+Example structure:
+```typescript
+// PageName.tsx
+export const PageName: FC = () => { ... };
+export default PageName;
+
+// index.ts
+import { lazy } from 'react';
+export const PageName = lazy(() => import('./PageName'));
+```
+
+## TypeScript Typing
+
+### Strict Typing
+- **Always type everything** - variables, functions, props, hooks
+- **Avoid `any`** - linter does not allow `any` usage
+- Use `unknown` if type is truly unknown, then narrow via type guards
+- Use `type` for type aliases, `interface` for extensible structures
+
+### Types from Project
+- Search for existing types in `src/types/`
+- Use types from constants: `ConverterStatus`, `FeedbackSource`, etc.
+- If type doesn't exist - create it in `src/types/index.ts` or next to usage
+
+## Constants and Enums
+
+### Using Constants
+- **DO NOT use magic strings and magic numbers**
+- Search for existing constants in `src/constants/`:
+  - `CONVERTER_STATUS` from `src/constants/statuses.ts`
+  - `EXPORT_FORMATS` from `src/constants/formats.ts`
+  - `FEEDBACK_SOURCES` from `src/constants/feedback.ts`
+  - `BANKS` from `src/constants/banks.ts`
+- If constant doesn't exist - create it in the corresponding file in `src/constants/`
+
+### Constant Format
+- Use `as const` to create readonly objects
+- Export type from constant: `export type TypeName = (typeof CONST_NAME)[keyof typeof CONST_NAME]`
+
+Example:
+```typescript
+export const STATUS = {
+  IDLE: 'idle',
+  LOADING: 'loading',
+} as const;
+
+export type Status = (typeof STATUS)[keyof typeof STATUS];
+```
+
+## Comments
+
+### Comment Rules
+- **DO NOT leave comments** in code unless they are critical
+- Comments **only in English**
+- Comments **only for complex logic** that requires explanation
+- Avoid obvious comments like `// Set state` or `// Return value`
+
+Example of acceptable comment:
+```typescript
+// Complex algorithm for parsing bank statements with multiple format variations
+// Handles edge cases where transaction dates might be in different timezones
+const parseStatement = (data: string) => { ... }
+```
+
+## Component Architecture
+
+### Logic and Hooks
+- **Always extract all logic into a local hook** next to the component
+- Hook should be in file `useComponentName.ts` in the same folder
+- Component imports hook: `import { useComponentName } from './useComponentName'`
+- Component should be maximally presentational (UI only)
+
+Example structure:
+```
+ComponentName/
+  ├── ComponentName.tsx (or index.tsx)
+  ├── ComponentName.test.tsx
+  └── useComponentName.ts
+```
+
+### Imports
+- Use path aliases: `@/components`, `@/constants`, `@/types`, `@/utils`
+- Group imports: external libraries first, then internal
+- Use `import type` for types
+- Follow import order rules from ESLint config
+
+## Testing
+
+### Required Tests
+- **Always write tests for new components**
+- Tests should be in file `ComponentName.test.tsx` next to the component
+- If component already had tests and you made changes - **update or supplement tests**
+- Cover main functionality, edge cases, and errors
+- Use Vitest and @testing-library/react
+
+### Test Structure
+- Use `describe` for grouping tests
+- Use `it` or `test` for individual tests
+- Use `beforeEach`, `afterEach` for setup/teardown when needed
+
+## Code Style
+
+### General Principles
+- Follow clean code principles
+- Use descriptive names for variables and functions
+- Avoid deep nesting (maximum 2-3 levels)
+- Break complex functions into smaller ones
+- Use destructuring for props and objects
+
+## Project Structure
+
+### Folders and Files
+- Components in `src/components/`:
+  - `common/` - common components (ErrorBoundary, etc.)
+  - `features/` - feature components (FileUploader, FeedbackForm, etc.)
+  - `layout/` - layout components (Header, Footer, Main)
+  - `ui/` - UI primitives (button, input, card, etc.)
+- Pages in `src/pages/`
+- Constants in `src/constants/`
+- Types in `src/types/`
+- Utilities in `src/utils/` and `src/lib/`
+
+### Naming Conventions
+- Components: PascalCase (`ComponentName`)
+- Component files: PascalCase or kebab-case (follow existing style)
+- Hooks: camelCase with `use` prefix (`useComponentName`)
+- Constants: UPPER_SNAKE_CASE (`CONVERTER_STATUS`)
+- Types: PascalCase (`ComponentProps`, `StatusType`)
+
+## Additional Rules
+
+### Error Handling
+- Always handle errors
+- Use ErrorBoundary for components
+- Show clear error messages to users
+
+### Performance
+- Use `React.memo` for components that re-render frequently
+- Use `useMemo` and `useCallback` when truly needed
+- Don't optimize prematurely
+
+### Accessibility
+- Use semantic HTML tags
+- Add ARIA attributes where needed
+- Ensure keyboard navigation
+
+## Git Commits and Pushes
+
+### Before Committing
+- **ALWAYS check files before committing and pushing**
+- Run linting: `npm run lint` or `eslint .`
+- Run formatting check: `npm run format:check` or `prettier --check .`
+- Run tests: `npm test` or `vitest run`
+- Fix any errors or warnings before committing
+
+### Commit Message Format
+- **MUST follow commitlint rules** from `commitlint.config.mjs`
+- Use conventional commit format: `type(scope): subject`
+- Allowed types: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `revert`
+- Header maximum length: 96 characters
+- Format: `type(scope): subject` (scope is optional)
+
+### Commit Message Examples
+```
+feat(converter): add support for XML export format
+fix(uploader): handle file validation errors
+chore(deps): update dependencies
+docs(readme): update installation instructions
+style(button): fix spacing in component
+refactor(parser): extract validation logic
+perf(converter): optimize file processing
+test(uploader): add tests for error handling
+```
+
+### Before Pushing
+- Ensure all checks pass (lint, format, tests)
+- Review changed files with `git status` and `git diff`
+- Verify commit message follows commitlint rules
+- Only push if everything is correct
