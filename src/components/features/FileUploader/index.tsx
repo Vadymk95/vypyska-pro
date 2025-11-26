@@ -125,7 +125,7 @@ export const FileUploader: FC<FileUploaderProps> = ({
                     <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
                     <div className="text-sm">
                         <p className="font-medium">Помилка обробки файлу</p>
-                        <p className="opacity-90">{error}</p>
+                        <p>{error}</p>
                     </div>
                 </div>
             )}

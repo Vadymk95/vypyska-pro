@@ -46,7 +46,7 @@ export const ConverterPage: FC = () => {
                         />
                         100% Конфіденційно
                     </span>
-                    <span className="mt-1 block text-sm opacity-80">
+                    <span className="mt-1 block text-sm text-muted-foreground">
                         Обробка відбувається у вашому браузері. Дані не передаються на сервер.
                     </span>
                 </p>
