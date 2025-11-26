@@ -1,8 +1,9 @@
 import { logEvent } from 'firebase/analytics';
 
-import { analytics } from './firebase';
+import { getAnalyticsInstance } from './firebase';
 
 export const trackPageView = () => {
+    const analytics = getAnalyticsInstance();
     if (!analytics) {
         return;
     }
@@ -22,6 +23,7 @@ export const trackReportGenerated = (params: {
     bank: string;
     transaction_count: number;
 }) => {
+    const analytics = getAnalyticsInstance();
     if (!analytics) {
         return;
     }

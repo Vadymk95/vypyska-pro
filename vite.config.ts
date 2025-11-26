@@ -32,10 +32,14 @@ export default defineConfig({
     build: {
         minify: 'oxc',
         target: 'esnext',
+        cssCodeSplit: true,
         rollupOptions: {
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
+                        if (id.includes('firebase')) {
+                            return 'firebase-vendor';
+                        }
                         if (
                             id.includes('react') ||
                             id.includes('react-dom') ||

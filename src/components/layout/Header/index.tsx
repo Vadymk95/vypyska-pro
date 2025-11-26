@@ -15,10 +15,7 @@ export const Header: FC = () => {
                     <span className="text-primary">Vypyska</span>.pro
                 </Link>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <ShieldCheck
-                        className="h-4 w-4 text-green-500"
-                        aria-label="Іконка безпеки"
-                    />
+                    <ShieldCheck className="h-4 w-4 text-green-500" aria-label="Іконка безпеки" />
                     <span>Безпечно та Локально</span>
                 </div>
             </div>

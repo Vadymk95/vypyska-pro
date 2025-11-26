@@ -15,16 +15,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-const analytics: Analytics | null =
-    typeof window !== 'undefined' && firebaseConfig.measurementId
-        ? (() => {
-              try {
-                  return getAnalytics(app);
-              } catch (error) {
-                  console.error('[Firebase] Failed to initialize Firebase Analytics:', error);
-                  return null;
-              }
-          })()
-        : null;
+let analyticsInstance: Analytics | null = null;
+let analyticsInitialized = false;
 
-export { analytics };
+export const getAnalyticsInstance = (): Analytics | null => {
+    if (analyticsInitialized) {
+        return analyticsInstance;
+    }
+
+    if (typeof window !== 'undefined' && firebaseConfig.measurementId && !analyticsInstance) {
+        try {
+            analyticsInstance = getAnalytics(app);
+            analyticsInitialized = true;
+            return analyticsInstance;
+        } catch (error) {
+            console.error('[Firebase] Failed to initialize Firebase Analytics:', error);
+            analyticsInitialized = true;
+            return null;
+        }
+    }
+
+    analyticsInitialized = true;
+    return null;
+};

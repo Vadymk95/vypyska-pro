@@ -10,7 +10,24 @@ export const Main: FC = () => {
 
     useEffect(() => {
         if (location.pathname === RoutesPath.Root) {
-            trackPageView();
+            // Lazy load analytics after page is interactive to avoid blocking render
+            if (document.readyState === 'complete') {
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => trackPageView(), { timeout: 2000 });
+                } else {
+                    setTimeout(() => trackPageView(), 1000);
+                }
+            } else {
+                const handleLoad = () => {
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(() => trackPageView(), { timeout: 2000 });
+                    } else {
+                        setTimeout(() => trackPageView(), 1000);
+                    }
+                };
+                window.addEventListener('load', handleLoad, { once: true });
+                return () => window.removeEventListener('load', handleLoad);
+            }
         }
     }, [location.pathname]);
 
