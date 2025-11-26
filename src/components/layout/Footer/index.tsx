@@ -9,7 +9,10 @@ export const Footer: FC = () => {
             <div className="mt-2">
                 <TermsOfUseModal
                     trigger={
-                        <button className="text-xs underline hover:text-foreground transition-colors">
+                        <button
+                            className="text-xs underline hover:text-foreground transition-colors"
+                            aria-label="Відкрити умови використання"
+                        >
                             Умови використання
                         </button>
                     }

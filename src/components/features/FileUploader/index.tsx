@@ -3,8 +3,8 @@ import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/constants';
 import type { BankType } from '@/constants';
+import { BANK_NAMES, FILE_EXTENSIONS, FILE_FORMATS } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { BankSelector } from './BankSelector';
@@ -63,8 +63,11 @@ export const FileUploader: FC<FileUploaderProps> = ({
                     error ? 'border-destructive/50 bg-destructive/5' : '',
                     isLoading ? 'opacity-50 pointer-events-none' : ''
                 )}
+                role="button"
+                aria-label="Завантажити CSV файл виписки"
+                tabIndex={0}
             >
-                <input {...getInputProps()} />
+                <input {...getInputProps()} aria-label="Виберіть файл для завантаження" />
 
                 <div className="relative z-10 flex flex-col items-center gap-4">
                     <div
@@ -77,9 +80,9 @@ export const FileUploader: FC<FileUploaderProps> = ({
                         )}
                     >
                         {error ? (
-                            <AlertCircle className="w-8 h-8" />
+                            <AlertCircle className="w-8 h-8" aria-label="Іконка помилки" />
                         ) : (
-                            <Upload className="w-8 h-8" />
+                            <Upload className="w-8 h-8" aria-label="Іконка завантаження" />
                         )}
                     </div>
 
@@ -115,8 +118,11 @@ export const FileUploader: FC<FileUploaderProps> = ({
             </div>
 
             {error && (
-                <div className="mt-4 p-4 bg-destructive/10 text-destructive rounded-lg flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-                    <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <div
+                    className="mt-4 p-4 bg-destructive/10 text-destructive rounded-lg flex items-start gap-3 animate-in fade-in slide-in-from-top-2"
+                    role="alert"
+                >
+                    <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
                     <div className="text-sm">
                         <p className="font-medium">Помилка обробки файлу</p>
                         <p className="opacity-90">{error}</p>

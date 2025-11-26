@@ -46,8 +46,11 @@ export const FeedbackForm: FC<FeedbackFormProps> = ({ source, className, onSucce
     return (
         <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
             {error && (
-                <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                <div
+                    className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800"
+                    role="alert"
+                >
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                     <div className="flex-1 text-sm">
                         <p className="font-medium">Помилка відправки</p>
                         <p className="mt-1">{error}</p>
@@ -65,7 +68,7 @@ export const FeedbackForm: FC<FeedbackFormProps> = ({ source, className, onSucce
                             onClick={() => handleRating(star)}
                             disabled={isSubmitting}
                             className={`transition-colors ${star <= rating ? 'text-yellow-400' : 'text-gray-300'} ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            aria-label={`Rate ${star} stars`}
+                            aria-label={`Оцінити ${star} зірок`}
                         >
                             <Star className="h-6 w-6 fill-current" />
                         </button>
@@ -101,12 +104,15 @@ export const FeedbackForm: FC<FeedbackFormProps> = ({ source, className, onSucce
             <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
                     <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2
+                            className="mr-2 h-4 w-4 animate-spin"
+                            aria-label="Відправка в процесі"
+                        />
                         Відправляється...
                     </>
                 ) : (
                     <>
-                        <Send className="mr-2 h-4 w-4" />
+                        <Send className="mr-2 h-4 w-4" aria-hidden="true" />
                         Надіслати відгук
                     </>
                 )}

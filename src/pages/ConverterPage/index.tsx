@@ -40,7 +40,10 @@ export const ConverterPage: FC = () => {
                     бухгалтерії.
                     <br />
                     <span className="text-foreground mt-2 flex items-center justify-center gap-2 font-medium">
-                        <ShieldCheck className="text-green-600 h-5 w-5" />
+                        <ShieldCheck
+                            className="text-green-600 h-5 w-5"
+                            aria-label="Іконка конфіденційності"
+                        />
                         100% Конфіденційно
                     </span>
                     <span className="mt-1 block text-sm opacity-80">
@@ -65,7 +68,7 @@ export const ConverterPage: FC = () => {
                 <Card className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-300">
                     <CardHeader className="text-center">
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
-                            <FileCheck className="h-8 w-8" />
+                            <FileCheck className="h-8 w-8" aria-label="Іконка успішної обробки" />
                         </div>
                         <CardTitle className="text-green-700 text-2xl">
                             Успішно оброблено!
@@ -95,12 +98,15 @@ export const ConverterPage: FC = () => {
                                 >
                                     {isDownloading ? (
                                         <>
-                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            <Loader2
+                                                className="h-4 w-4 animate-spin"
+                                                aria-label="Завантаження в процесі"
+                                            />
                                             Завантажується...
                                         </>
                                     ) : (
                                         <>
-                                            <Download className="h-4 w-4" />
+                                            <Download className="h-4 w-4" aria-hidden="true" />
                                             Завантажити TXT
                                         </>
                                     )}
@@ -114,12 +120,15 @@ export const ConverterPage: FC = () => {
                                 >
                                     {isDownloading ? (
                                         <>
-                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            <Loader2
+                                                className="h-4 w-4 animate-spin"
+                                                aria-label="Завантаження в процесі"
+                                            />
                                             Завантажується...
                                         </>
                                     ) : (
                                         <>
-                                            <Download className="h-4 w-4" />
+                                            <Download className="h-4 w-4" aria-hidden="true" />
                                             Завантажити XML
                                         </>
                                     )}
