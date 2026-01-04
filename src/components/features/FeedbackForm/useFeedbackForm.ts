@@ -20,7 +20,7 @@ interface UseFeedbackFormProps {
 }
 
 export const useFeedbackForm = ({ source, onSuccess }: UseFeedbackFormProps) => {
-    const [rating, setRating] = useState<number>(0);
+    const [rating, setRating] = useState<number | undefined>(undefined);
     const [isSuccess, setIsSuccess] = useState(false);
 
     const sendFeedback = useFeedbackStore.use.sendFeedback();
@@ -38,13 +38,15 @@ export const useFeedbackForm = ({ source, onSuccess }: UseFeedbackFormProps) => 
         resolver: zodResolver(feedbackSchema),
         mode: 'onBlur',
         defaultValues: {
-            rating: 0
+            email: '',
+            message: '',
+            rating: undefined
         }
     });
 
     const handleRating = (value: number) => {
         setRating(value);
-        setValue('rating', value);
+        setValue('rating', value, { shouldValidate: false });
     };
 
     const onSubmit = async (data: FeedbackFormValues) => {
@@ -54,13 +56,18 @@ export const useFeedbackForm = ({ source, onSuccess }: UseFeedbackFormProps) => 
             if (onSuccess) onSuccess();
         } catch (err) {
             console.error(err);
+            resetStore();
         }
     };
 
     const handleReset = () => {
         setIsSuccess(false);
-        setRating(0);
-        reset();
+        setRating(undefined);
+        reset({
+            email: '',
+            message: '',
+            rating: undefined
+        });
         resetStore();
     };
 

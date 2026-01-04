@@ -32,11 +32,22 @@ const useFeedbackStoreBase = create<FeedbackState>()(
                 });
 
                 try {
-                    await addDoc(collection(db, 'feedbacks'), {
-                        ...data,
+                    const feedbackData: Record<string, unknown> = {
+                        email: data.email,
+                        message: data.message,
                         createdAt: serverTimestamp(),
                         userAgent: navigator.userAgent
-                    });
+                    };
+
+                    if (data.rating !== undefined && data.rating > 0) {
+                        feedbackData.rating = data.rating;
+                    }
+
+                    if (data.source) {
+                        feedbackData.source = data.source;
+                    }
+
+                    await addDoc(collection(db, 'feedbacks'), feedbackData);
 
                     set({ isSubmitting: false, error: null }, false, {
                         type: 'feedback-store/send/success'
